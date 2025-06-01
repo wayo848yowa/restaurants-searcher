@@ -38,3 +38,5 @@
 .irb_history
 
 dump.rdb
+
+/.env #追記
