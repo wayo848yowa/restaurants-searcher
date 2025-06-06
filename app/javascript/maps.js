@@ -1,0 +1,15 @@
+let map;
+function initMap(){
+  //位置情報取得
+  navigator.geolocation.getCurrentPosition(function (position) {
+    LatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      
+    //取得した位置情報を中心に表示
+    map = new google.maps.Map(document.getElementById('map'),{
+      center: LatLng,//上で設定した中心
+      zoom: 15//ズームの調整
+    });
+  });
+}
+
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJkNaFwBZOzxoG3O6-CoBPyYolJYLdoFY&callback=initMap"
