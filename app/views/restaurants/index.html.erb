@@ -1,0 +1,452 @@
+<% content_for :title, "レストラン検索" %>
+
+<div class="container">
+  <div class="header">
+    <h1>🍽️ レストラン検索</h1>
+    <p>現在地から近くのレストランを探します</p>
+  </div>
+  
+  <div class="search-card">
+    <%= form_with url: restaurants_path, method: :get, local: true, class: "search-form", id: "restaurant-search-form" do |f| %>
+      <div class="form-group">
+        <label>📍 現在地情報</label>
+        <div class="location-info">
+          <div id="location-status">位置情報を取得中...</div>
+          <div id="location-coords" style="display:none;"></div>
+        </div>
+        <%= f.hidden_field :lat, id: "lat-input" %>
+        <%= f.hidden_field :lng, id: "lng-input" %>
+      </div>
+      
+      <div class="form-group">
+        <label>🔍 検索範囲を選択</label>
+        <div class="range-selector">
+          <% [
+            { value: 1, label: "300m以内" },
+            { value: 2, label: "500m以内" },
+            { value: 3, label: "1km以内" },
+            { value: 4, label: "2km以内" },
+            { value: 5, label: "3km以内" }
+          ].each do |range_option| %>
+            <div class="range-option">
+              <%= f.radio_button :range, range_option[:value], 
+                    id: "range#{range_option[:value]}", 
+                    checked: (@search_params[:range].to_i == range_option[:value]) || (range_option[:value] == 3 && !@search_params[:range]) %>
+              <%= f.label "range#{range_option[:value]}", range_option[:label] %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      
+      <%= f.submit "検索する", class: "btn", id: "search-btn", disabled: true %>
+    <% end %>
+  </div>
+  
+  <% if @error_message %>
+    <div class="error-message">
+      <%= @error_message %>
+    </div>
+  <% end %>
+  
+  <% if @restaurants.present? || (@search_params[:lat].present? && @search_params[:lng].present?) %>
+    <div class="results-section">
+      <div class="results-header">
+        <h2>
+          検索結果
+          <% if @total_count %>
+            (<%= @total_count %>件)
+          <% end %>
+        </h2>
+        <% if @search_params[:lat].present? && @search_params[:lng].present? %>
+          <p>位置: <%= @search_params[:lat] %>, <%= @search_params[:lng] %></p>
+        <% end %>
+      </div>
+      
+      <div class="results-content">
+        <% if @restaurants.present? %>
+          <div class="restaurant-grid">
+            <% @restaurants.each do |restaurant| %>
+              <div class="restaurant-card">
+                <% if restaurant[:photo] %>
+                  <%= image_tag restaurant[:photo], alt: restaurant[:name], class: "restaurant-image" %>
+                <% else %>
+                  <div class="restaurant-image-placeholder">
+                    <span>No Image</span>
+                  </div>
+                <% end %>
+                
+                <div class="restaurant-info">
+                  <h3 class="restaurant-name"><%= restaurant[:name] %></h3>
+                  
+                  <div class="restaurant-detail">
+                    <i>📍</i>
+                    <span><%= restaurant[:address] %></span>
+                  </div>
+                  
+                  <% if restaurant[:access] %>
+                    <div class="restaurant-detail">
+                      <i>🚶</i>
+                      <span><%= restaurant[:access] %></span>
+                    </div>
+                  <% end %>
+                  
+                  <% if restaurant[:budget] %>
+                    <div class="restaurant-detail">
+                      <i>💰</i>
+                      <span><%= restaurant[:budget] %></span>
+                    </div>
+                  <% end %>
+                  
+                  <% if restaurant[:genre] %>
+                    <span class="genre-tag"><%= restaurant[:genre] %></span>
+                  <% end %>
+                  
+                  <% if restaurant[:urls] %>
+                    <div style="margin-top: 10px;">
+                      <%= link_to "詳細を見る", restaurant[:urls], target: "_blank", class: "btn btn-small" %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="no-results">
+            <p>該当するレストランが見つかりませんでした。</p>
+            <p>検索範囲を広げてみてください。</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<style>
+/* 上記のHTMLファイルと同じCSSを適用 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  color: #333;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.search-card {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  margin-bottom: 30px;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #555;
+  font-size: 1.1rem;
+}
+
+.location-info {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.range-selector {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.range-option {
+  flex: 1;
+  min-width: 120px;
+}
+
+.range-option input[type="radio"] {
+  display: none;
+}
+
+.range-option label {
+  display: block;
+  padding: 15px;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.range-option label:hover {
+  background: #e9ecef;
+  border-color: #667eea;
+}
+
+.range-option input[type="radio"]:checked + label {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.btn {
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.results-section {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.results-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.restaurant-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.restaurant-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.restaurant-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.restaurant-image-placeholder {
+  width: 100%;
+  height: 200px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.restaurant-info {
+  padding: 20px;
+}
+
+.restaurant-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.restaurant-detail {
+  margin-bottom: 8px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.restaurant-detail i {
+  width: 16px;
+  color: #667eea;
+}
+
+.genre-tag {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #f5c6cb;
+  margin-bottom: 20px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.no-results p {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .range-selector {
+    flex-direction: column;
+  }
+  
+  .range-option {
+    min-width: auto;
+  }
+  
+  .restaurant-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+}
+</style>
+
+<script>
+let currentPosition = null;
+
+// ページ読み込み時に位置情報を取得
+window.addEventListener('load', function() {
+  getCurrentLocation();
+});
+
+function getCurrentLocation() {
+  const locationStatus = document.getElementById('location-status');
+  const locationCoords = document.getElementById('location-coords');
+  const searchBtn = document.getElementById('search-btn');
+  const latInput = document.getElementById('lat-input');
+  const lngInput = document.getElementById('lng-input');
+  
+  if (!navigator.geolocation) {
+    locationStatus.textContent = '位置情報がサポートされていません';
+    locationStatus.style.color = '#d32f2f';
+    return;
+  }
+  
+  navigator.geolocation.getCurrentPosition(
+    function(position) {
+      currentPosition = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      };
+      
+      // 隠しフィールドに位置情報を設定
+      latInput.value = currentPosition.latitude;
+      lngInput.value = currentPosition.longitude;
+      
+      locationStatus.textContent = '位置情報を取得しました ✓';
+      locationStatus.style.color = '#2e7d32';
+      
+      locationCoords.textContent = `緯度: ${currentPosition.latitude.toFixed(6)}, 経度: ${currentPosition.longitude.toFixed(6)}`;
+      locationCoords.style.display = 'block';
+      locationCoords.style.fontSize = '0.9rem';
+      locationCoords.style.marginTop = '8px';
+      locationCoords.style.color = '#666';
+      
+      searchBtn.disabled = false;
+    },
+    function(error) {
+      let errorMsg = '';
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          errorMsg = '位置情報の利用が拒否されました';
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMsg = '位置情報を取得できませんでした';
+          break;
+        case error.TIMEOUT:
+          errorMsg = '位置情報の取得がタイムアウトしました';
+          break;
+        default:
+          errorMsg = '位置情報の取得中にエラーが発生しました';
+          break;
+      }
+      locationStatus.textContent = errorMsg;
+      locationStatus.style.color = '#d32f2f';
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 300000
+    }
+  );
+}
+</script>
