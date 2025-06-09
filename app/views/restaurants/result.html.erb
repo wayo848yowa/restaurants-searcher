@@ -1,0 +1,81 @@
+<% content_for :title, "検索結果 - ぐるめいと！" %>
+
+<div class="container">
+  <div class="header">
+    <h1>ぐるめいと！</h1>
+  </div>
+
+  <% if @restaurants.present? || (@search_params[:lat].present? && @search_params[:lng].present?) %>
+    <div class="results-section">
+      <div class="results-header">
+        <%= link_to "< 別の条件で検索", restaurants_path, class: "btn btn-small" %>
+        <h2>
+          検索結果
+          <% if @total_count %>
+            (<%= @total_count %>件)
+          <% end %>
+        </h2>
+        <% if @search_params[:lat].present? && @search_params[:lng].present? %>
+          <p>位置: <%= @search_params[:lat] %>, <%= @search_params[:lng] %></p>
+        <% end %>
+      </div>
+      
+      <div class="results-content">
+        <% if @restaurants.present? %>
+          <div class="restaurant-grid">
+            <% @restaurants.each do |restaurant| %>
+              <div class="restaurant-card">
+                <% if restaurant[:photo] %>
+                  <%= image_tag restaurant[:photo], alt: restaurant[:name], class: "restaurant-image" %>
+                <% else %>
+                  <div class="restaurant-image-placeholder">
+                    <span>No Image</span>
+                  </div>
+                <% end %>
+                
+                <div class="restaurant-info">
+                  <h3 class="restaurant-name"><%= restaurant[:name] %></h3>
+                  
+                  <div class="restaurant-detail">
+                    <i>📍</i>
+                    <span><%= restaurant[:address] %></span>
+                  </div>
+                  
+                  <% if restaurant[:access] %>
+                    <div class="restaurant-detail">
+                      <i>🚶</i>
+                      <span><%= restaurant[:access] %></span>
+                    </div>
+                  <% end %>
+                  
+                  <% if restaurant[:budget] %>
+                    <div class="restaurant-detail">
+                      <i>💰</i>
+                      <span><%= restaurant[:budget] %></span>
+                    </div>
+                  <% end %>
+                  
+                  <% if restaurant[:genre] %>
+                    <span class="genre-tag"><%= restaurant[:genre] %></span>
+                  <% end %>
+                  
+                  <% if restaurant[:urls] %>
+                    <div style="margin-top: 10px;">
+                      <%= link_to "詳細を見る", restaurant[:urls], target: "_blank", class: "btn btn-small" %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="no-results">
+            <p>該当するレストランが見つかりませんでした。</p>
+            <p>検索範囲を広げてみてください。</p>
+            <%= link_to "検索条件を変更する", restaurants_path, class: "btn" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
