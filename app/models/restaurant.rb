@@ -7,7 +7,7 @@ class Restaurant
   def self.create_url(options = {})
     base_url = 'https://webservice.recruit.co.jp/hotpepper/gourmet/v1/'
     params = {
-      key: '3b635989720cdb1a',
+      key: ENV['HOTPEPPER_API_KEY'],
       format: 'json'
     }
     
