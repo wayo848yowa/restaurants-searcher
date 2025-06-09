@@ -3,12 +3,14 @@
 <div class="container">
   <div class="header">
     <h1>ぐるめいと！</h1>
+    <p>店舗ごとの詳細情報ページ</p>
   </div>
 
   <% if @restaurants.present? || (@search_params[:lat].present? && @search_params[:lng].present?) %>
     <div class="results-section">
       <div class="results-header">
-        <%= link_to "< 別の条件で検索", restaurants_path, class: "btn btn-small" %>
+        <!--<%= link_to "< ", 'javascript:history.back()', class: "btn btn-small" %>前ページに戻る-->
+         <%= link_to "< ", :back, class: "btn btn-small" %>
         <h2>
           検索結果
           <% if @total_count %>
@@ -62,9 +64,6 @@
                   <% if restaurant[:urls] %>
                     <div style="margin-top: 10px;">
                       <%= link_to "詳細を見る", restaurant[:urls], target: "_blank", class: "btn btn-small" %>
-                    </div>
-                    <div style="margin-top: 10px;">
-                      <!--ここのリンクを踏むとdetailをレンダリングするようにする-->
                     </div>
                   <% end %>
                 </div>
