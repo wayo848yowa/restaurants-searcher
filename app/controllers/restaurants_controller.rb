@@ -61,10 +61,8 @@ class RestaurantsController < ApplicationController
       @restaurants = Restaurant.format_results(api_response)
       @total_count = api_response.dig('results', 'results_returned') || 0
 
-      
-      
       # kaminariを使ってページング実装
-      @restaurants = Kaminari.paginate_array(@restaurants).page(params[:page]).per(2)
+      @restaurants = Kaminari.paginate_array(@restaurants).page(params[:page]).per(10)
 
       # 検索結果をセッションに保存（詳細ページで使用するため）
       session[:restaurants_data] = all_restaurants
