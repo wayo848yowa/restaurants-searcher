@@ -19,6 +19,35 @@ class RestaurantsController < ApplicationController
     end
   end
 
+    def show
+    restaurant_id = params[:id]
+    
+    # セッションから検索結果を取得
+    if session[:restaurants_data]
+      @restaurant = session[:restaurants_data].find { |r| r[:id] == restaurant_id }
+    end
+    
+    # セッションにデータがない場合は、APIから再検索
+    if @restaurant.nil?
+      search_options = {
+        id: restaurant_id
+      }
+      
+      api_response = Restaurant.search(search_options)
+      
+      if api_response && api_response['results'] && api_response['results']['shop']
+        shops = Restaurant.format_results(api_response)
+        @restaurant = shops.first
+      end
+    end
+    
+    if @restaurant.nil?
+      redirect_to restaurants_path, alert: 'レストランが見つかりませんでした。'
+    else
+      render :detail
+    end
+  end
+
   private
 
   def search_restaurants
