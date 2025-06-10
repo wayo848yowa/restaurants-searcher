@@ -6,7 +6,7 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ff6e46 0%, #e03647 100%);
   min-height: 100vh;
   color: #333;
 }
@@ -59,7 +59,7 @@ body {
   background: #f8f9fa;
   padding: 15px;
   border-radius: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #ff6e46;
 }
 
 .range-selector {
@@ -91,18 +91,18 @@ body {
 
 .range-option label:hover {
   background: #e9ecef;
-  border-color: #667eea;
+  border-color: #ff6e46;
 }
 
 .range-option input[type="radio"]:checked + label {
-  background: #667eea;
+  background: #ff6e46;
   color: white;
-  border-color: #667eea;
+  border-color: #ff6e46;
 }
 
 .btn {
   padding: 15px 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ff6e46 0%, #e03647 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -196,19 +196,18 @@ body {
 .restaurant-detail {
   margin-bottom: 8px;
   color: #666;
-  display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .restaurant-detail i {
   width: 16px;
-  color: #667eea;
+  color: #ff6e46;
 }
 
 .genre-tag {
   display: inline-block;
-  background: #667eea;
+  background: #ff6e46;
   color: white;
   padding: 4px 12px;
   border-radius: 20px;
@@ -217,11 +216,11 @@ body {
 }
 
 .error-message {
-  background: #f8d7da;
+  background: #ff8080;
   color: #721c24;
   padding: 15px;
   border-radius: 8px;
-  border: 1px solid #f5c6cb;
+  border: 1px solid #ff8080;
   margin-bottom: 20px;
 }
 
@@ -234,6 +233,15 @@ body {
 .no-results p {
   margin-bottom: 10px;
   font-size: 1.1rem;
+}
+
+.detail-genre {
+  margin-bottom: 30px;
+}
+
+.backlink{
+  width: 100%;
+  margin-right: auto;
 }
 
 @media (max-width: 768px) {
