@@ -1,0 +1,61 @@
+<% content_for :title, "#{@restaurant[:name]} - 詳細 - ぐるめいと！" %>
+
+<div class="container">
+  <div class="header">
+    <h1>店舗詳細</h1>
+    <div class="backlink">
+      <%= link_to "< 検索結果に戻る", :back, class: "btn btn-small" %>
+    </div>
+  </div>
+
+  <div class="results-section">
+    
+    
+      
+        <h1 class="restaurant-name"><%= @restaurant[:name] %></h1>
+        <% if @restaurant[:genre] %>
+          <span class="genre-tag"><%= @restaurant[:genre] %></span>
+        <% end %>
+        <p>　</p>
+        <% if @restaurant[:photo] %>
+          <div class="restaurant-image">
+            <%= image_tag @restaurant[:photo], alt: @restaurant[:name], class: "detail-image" %>
+          </div>
+        <% else %>
+          <div class="restaurant-image-placeholder">
+            <span>No Image Available</span>
+          </div>
+        <% end %>
+        
+        <div class="restaurant-info">
+          <div class="restaurant-detail">            
+            <div class="info-item">
+              <h3>📍住所</h3>
+              <%= @restaurant[:address] %>
+            </div>
+            <p>　</p>
+            <% if @restaurant[:access] %>
+              <div class="info-item">
+                <h3>🚶アクセス</h3>
+                <%= @restaurant[:access] %>
+              </div>
+            <% end %>
+            <p>　</p>
+            <% if @restaurant[:budget] %>
+              <div class="info-item">
+                <h3>💰予算</h3>
+                <%= @restaurant[:budget] %>
+              </div>
+            <% end %>
+          </div>
+          <p>　</p>
+          <% if @restaurant[:urls] %>
+            <div class="detail-actions">
+              <%= link_to "ホットペッパーで詳細を見る", @restaurant[:urls], target: "_blank", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      
+    
+  </div>
+</div>

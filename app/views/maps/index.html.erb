@@ -1,22 +1,32 @@
-<div class="center">
-  <div id="map">
+<header>
+  <div id="search">
+    <%= form_tag(restaurants_search_path,method: :get) do %>
+      <%= search_field_tag :looking_for,nil,placeholder: 'Restaurant name...' %>
+      <%= submit_tag '検索'%>
+    <% end %>
   </div>
-</div>
-<script src="maps.js"></script>
-<script>
-  let map;
-  function initMap(){
-    //位置情報取得
-    navigator.geolocation.getCurrentPosition(function (position) {
-      LatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-      
-      //取得した位置情報を中心に表示
-      map = new google.maps.Map(document.getElementById('map'),{
-        center: LatLng,//上で設定した中心
-        zoom: 15//ズームの調整
-      });
-    });
-  }
-</script>
+</header>
+<main>
+  <div class="center">
+    <div id="map">
+    </div>
+  </div>
+  <div id="result">
+    <% if @restaurant_results.blank? %>
+      <p>[<%= @search_term %>]と一致する情報が見つかりませんでした</p>
+    <% else %>
+      <p>[<%= @search_term %>]の検索結果</p>
+      <table>
+        <tr>
+          <td>
+            <% @restaurant_results.each do |restaurant| %>
+              <%= link_to restaurant['name'],action: 'show',id: "#{restaurant["id"]}" %>
+            <% end %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</main>
+<%= javascript_include_tag 'map' %>
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJkNaFwBZOzxoG3O6-CoBPyYolJYLdoFY&callback=initMap"></script>
-

@@ -1,0 +1,47 @@
+<% content_for :title, "ぐるめいと！" %>
+
+<div class="container">
+  <div class="header">
+    <h1>ぐるめいと！</h1>
+    <p>近くの飲食店を探します</p>
+  </div>
+  
+  <div class="search-card">
+    <%= form_with url: restaurants_path, method: :get, local: true, class: "search-form", id: "restaurant-search-form" do |f| %>
+      <div class="form-group">
+        <label>📍 現在地情報</label>
+        <div class="location-info">
+          <div id="location-status">位置情報を取得中...</div>
+          <div id="location-coords" style="display:none;"></div>
+        </div>
+        <%= f.hidden_field :lat, id: "lat-input" %>
+        <%= f.hidden_field :lng, id: "lng-input" %>
+      </div>
+      
+      <div class="form-group">
+        <label>検索範囲を選択</label>
+        <div class="range-selector">
+          <% [
+            { value: 1, label: "300m以内" },
+            { value: 2, label: "500m以内" },
+            { value: 3, label: "1km以内" },
+            { value: 4, label: "2km以内" },
+            { value: 5, label: "3km以内" }
+          ].each do |range_option| %>
+            <div class="range-option">
+              <%= f.radio_button :range, range_option[:value], 
+                    id: "range#{range_option[:value]}", 
+                    checked: (@search_params[:range].to_i == range_option[:value]) || (range_option[:value] == 3 && !@search_params[:range]) %>
+              <%= f.label "range#{range_option[:value]}", range_option[:label] %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      
+      <%= f.submit "検索する", class: "btn", id: "search-btn", disabled: true %>
+    <% end %>
+  </div>
+  
+</div>
+
+<%= javascript_include_tag 'restaurant' %>
