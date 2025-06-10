@@ -19,28 +19,28 @@ class RestaurantsController < ApplicationController
     end
   end
 
-    def show
+  def show
     restaurant_id = params[:id]
-    
+
     # セッションから検索結果を取得
     if session[:restaurants_data]
-      @restaurant = session[:restaurants_data].find { |r| r[:id] == restaurant_id }
+      @restaurant = session[:restaurants_data].find { |r| r[:id] == restaurant_id }.page(params[:page])
     end
-    
+
     # セッションにデータがない場合は、APIから再検索
     if @restaurant.nil?
       search_options = {
         id: restaurant_id
       }
-      
+
       api_response = Restaurant.search(search_options)
-      
+
       if api_response && api_response['results'] && api_response['results']['shop']
         shops = Restaurant.format_results(api_response)
         @restaurant = shops.first
       end
     end
-    
+
     if @restaurant.nil?
       redirect_to restaurants_path, alert: 'レストランが見つかりませんでした。'
     else
@@ -60,6 +60,15 @@ class RestaurantsController < ApplicationController
     if api_response
       @restaurants = Restaurant.format_results(api_response)
       @total_count = api_response.dig('results', 'results_returned') || 0
+
+      
+      
+      # kaminariを使ってページング実装
+      @restaurants = Kaminari.paginate_array(@restaurants).page(params[:page]).per(2)
+
+      # 検索結果をセッションに保存（詳細ページで使用するため）
+      session[:restaurants_data] = all_restaurants
+
     else
       @error_message = '検索中にエラーが発生しました。'
     end
@@ -84,7 +93,7 @@ class RestaurantsController < ApplicationController
                       end
 
     # その他のオプション
-    options[:count] = 20 # 取得件数
+    options[:count] = 50 # 取得件数
     options[:order] = 4  # 距離順
 
     options
