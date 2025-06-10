@@ -16,7 +16,9 @@
             (<%= @total_count %>件)
           <% end %>
         </h2>
-        
+        <% if @restaurants.present? %>
+          <%= paginate @restaurants %>
+        <% end %>
       </div>
       
       <div class="results-content">

@@ -41,7 +41,8 @@ end
 # Windows ではタイムゾーン情報用の tzinfo-data gem を含める必要があります
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 
-#以下追加
+
 gem 'dotenv-rails'  #環境変数管理用
 gem 'httparty'      #HTTPリクエスト用
 gem 'activesupport' #変数評価用
+gem 'kaminari'      #ページング実装用
